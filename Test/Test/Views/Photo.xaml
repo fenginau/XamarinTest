@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Test.Views.Photo">
+    <ContentPage.Content>
+        <StackLayout HorizontalOptions="FillAndExpand">
+            <Button x:Name="TakeBtn" Text="Take Photo" Clicked="TakePhoto" HorizontalOptions="FillAndExpand" />
+            <Image x:Name="Viewer" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" />
+            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                <Button x:Name="LeftBtn" Text="Last" Clicked="LastPhoto" HorizontalOptions="Start" />
+                <Button x:Name="NextBtn" Text="Next" Clicked="NextPhoto" HorizontalOptions="End" />
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,219 @@
+<html>
+    <head>
+        <script src="./jquery.min.js"></script>
+        <script src="./jquery.signalR-2.2.1.min.js"></script>
+    </head>
+    <body>
+        <input type="text" id="myId" />
+        <input type="text" id="peerId" />
+        <video id="localVideo" autoplay muted height="400"></video>
+        <video id="remoteVideo" autoplay height="400"></video>
+        <button id="connectButton" style="width: 200px; height: 100px;">Connect</button>
+        <button id="startButton">Call</button>
+        <script>
+            var startButton = document.getElementById('startButton');
+            var connectButton = document.getElementById('connectButton');
+            var localVideo = document.getElementById("localVideo");
+            var remoteVideo = document.getElementById("remoteVideo");
+            var localStream;
+            var remoteStream;
+            startButton.onclick = function(){
+                start();
+            }
+            connectButton.onclick = function () {
+                connect();
+            }
+
+            var peerConnCfg = {
+                'iceServers':
+                    [
+                        { 'urls': "stun:stun.services.mozilla.com" },
+                        { 'urls': "stun:stun.l.google.com:19302" },
+                        {
+                            'url': 'turn:numb.viagenie.ca',
+                            'credential': 'streamline',
+                            'username': 'test@ssolutions.com.au'
+                        }
+                    ]
+            };
+
+            var myId;
+            var peerId;
+            var callNotificationHub;
+            var peerConnection;
+            function connect(){
+                myId = document.getElementById('myId').value;
+                var proxyConnection = $.hubConnection();
+                proxyConnection.url = 'https://anc-dev.connectinghomehealth.com/notificationServer/signalr/hubs';
+                proxyConnection.qs = 'hardware_id=' + myId + '&connection_type=1';
+                callNotificationHub = proxyConnection.createHubProxy("callNotificationHub");
+                callNotificationHub.on("requestCallListener", function (request) {
+                    request.response = true;
+                    callNotificationHub.invoke("responseCall", request).fail(function(error) {
+                        console.log("Invocation of responseCall failed. Error: " + error);
+                    });
+                    answerCall(request);
+                });
+                callNotificationHub.on('requestCallResponse', function(response) {
+                    if (response.response){
+                        call(response);
+                    } else {
+                        console.log('Call rejected.');
+                    }
+                });
+                callNotificationHub.on('clientMessage', function(webRtcObj) {
+                    var signal = JSON.parse(webRtcObj);
+                    console.log(signal);
+                    if (signal.sdp) {
+                        peerConnection.setRemoteDescription(new RTCSessionDescription(signal.sdp));
+                    } else if (signal.candidate) {
+                        peerConnection.addIceCandidate(new RTCIceCandidate(signal.candidate));
+                    }
+                });
+                proxyConnection.start()
+                    .done(function () {
+                        console.log("HubProxy Now connected, connection ID=" + proxyConnection.id);
+                    })
+                    .fail(function (err) {
+                        console.log("HubProxy Could not connect");
+                        console.log(err);
+                    });
+            }
+
+            function start() {
+                console.log('Requesting local stream');
+                peerId = document.getElementById('peerId').value;
+                navigator.mediaDevices.getUserMedia({
+                        audio: true,
+                        video: true
+                    })
+                    .then(function(stream) {
+                        gotStream(stream);
+                        var date = new Date();
+                        //Android notificationId when making a call 
+                        notificationId = date.getTime() & 0xfffffff;
+
+                        callNotificationHub.invoke('requestCall',
+                        {
+                            'clientId': peerId,
+                            'agentId': myId,
+                            'hardwareId': peerId,
+                            'notificationId': notificationId,
+                            'isVoiceOnly': false
+                        });
+                    })
+                    .catch(function(e) {
+                        alert('getUserMedia() error: ' + e.name);
+                    });
+                return false;
+            }
+
+            function gotStream(stream) {
+                console.log("Received local stream");
+                localVideo.srcObject = stream;
+                localStream = stream;
+            };
+
+            function prepareCall() {
+                if (!RTCPeerConnection) {
+                    RTCPeerConnection = RTCPeerConnection;
+                }
+    
+                peerConnection = new RTCPeerConnection(peerConnCfg);
+                peerConnection.onicecandidate = onIceCandidateHandler;
+                peerConnection.oniceconnectionstatechange = function () {
+                    console.log(peerConnection.iceConnectionState);
+                    if (peerConnection.iceConnectionState == 'failed') {
+                        console.log('Network error, please try again.');
+                    }
+                    if (peerConnection.iceConnectionState == 'completed' || peerConnection.iceConnectionState == 'connected') {
+                        remoteVideo.srcObject = peerConnection.getRemoteStreams()[0];
+                        remoteStream = peerConnection.getRemoteStreams()[0];
+                    }
+                    if (peerConnection.iceConnectionState == 'disconnected') {
+                        location.reload();
+                    }
+                };
+            };
+
+            function prepareCallRecieve(){
+                peerConnection = new RTCPeerConnection(peerConnCfg);
+                peerConnection.oniceconnectionstatechange = function () {
+                    console.log(peerConnection.iceConnectionState);
+                    if (peerConnection.iceConnectionState == 'failed') {
+                        console.log('Network error, please try again.');
+                        alert('Network error, please try again.');
+                    }
+                    if (peerConnection.iceConnectionState == 'connected') {
+                        remoteVideo.srcObject = peerConnection.getRemoteStreams()[0];
+                        remoteStream = peerConnection.getRemoteStreams()[0];
+                    }
+                };
+            }
+
+            function onIceCandidateHandler(evt) {
+                //console.log(evt);
+                if (!evt || !evt.candidate) return;
+                if (!evt.candidate) {
+                    iceCandidate.push(evt.candidate);
+                }
+                console.log(evt.candidate);
+                callNotificationHub.invoke("sendStringData", peerId, JSON.stringify({ "candidate": evt.candidate }));
+            };
+
+            function call(response){
+                prepareCall();
+                peerConnection.addStream(localStream);
+                peerConnection.createOffer(
+                    function (offer) {
+                        var offer = new RTCSessionDescription(offer);
+                        peerConnection.setLocalDescription(offer,
+                            function () {
+                                callNotificationHub.invoke('sendStringData', peerId, JSON.stringify({ "sdp": offer }));
+                            },
+                            function (error) {
+                                console.log(error);
+                            }
+                        );
+                    },
+                    function (error) {
+                        console.log(error);
+                    }
+                );
+            }
+
+            function answerCall(request){
+                prepareCallRecieve();
+                navigator.mediaDevices.getUserMedia({
+                    audio: true,
+                    video: true
+                }).then(function (stream) {
+                    gotStream(stream);
+                    peerConnection.addStream(localStream);
+                    createAndSendAnswer(request);
+                }).catch(function (e) {
+                    alert("getUserMedia() error: " + e.name + " - " + e.message);
+                });
+            }
+
+            function createAndSendAnswer(request) {
+                peerConnection.createAnswer(
+                    function (answer) {
+                        var ans = new RTCSessionDescription(answer);
+                        peerConnection.setLocalDescription(ans,
+                            function () {
+                                callNotificationHub.invoke('sendStringData', request.agentId, JSON.stringify({ "sdp": ans }));
+                            },
+                            function (error) {
+                                console.log(error);
+                            }
+                        );
+                    },
+                    function (error) {
+                        console.log(error);
+                    }
+                );
+            };
+        </script>
+    </body>
+</html>

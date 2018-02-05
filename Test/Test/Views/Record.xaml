@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Test.Views.Record"
+             xmlns:g="clr-namespace:Test.Utils;">
+    <ContentPage.Content>
+        <StackLayout>
+            <RelativeLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" x:Name="ImgContainer" >
+                <Image Source="assessment.png" HorizontalOptions="FillAndExpand" x:Name="AssessmentImg" g:Gesture.Tapped="{Binding CanvasTappedCommand}" />
+            </RelativeLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

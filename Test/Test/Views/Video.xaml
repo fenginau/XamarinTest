@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Test.Controls;"
+             x:Class="Test.Views.Video">
+    <ContentPage.Content>
+        <StackLayout x:Name="VideoContent" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+            <local:WebView HtmlSource="file:///android_asset/index.html" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Aqua"></local:WebView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Test.Views.Chat"
+             Title="Chat">
+    <ContentPage.Content>
+        <StackLayout>
+            <ScrollView VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" x:Name="ChatContent">
+
+            </ScrollView>
+            <Frame BackgroundColor="Azure">
+                <StackLayout Orientation="Horizontal" >
+                    <Entry x:Name="Message" Placeholder="Message" HorizontalOptions="FillAndExpand" Focused="EntryFocusHandler" />
+                    <Button x:Name="Send" Text="Send" Clicked="SendMessage" WidthRequest="80" />
+                </StackLayout>
+            </Frame>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

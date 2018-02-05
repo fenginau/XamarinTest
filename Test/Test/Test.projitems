@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>4bcdb62a-420e-42da-9c08-caa1d821039a</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Test</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\DrawView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\WebView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\VideoView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ChatModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\HttpResultModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ConversationModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\RestService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils\ColorHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils\Gesture.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils\Logger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\RecordViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Home.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Chat.xaml.cs">
+      <DependentUpon>Chat.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)GlobalVariable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\HubProxy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\MainPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\MessageModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Photo.xaml.cs">
+      <DependentUpon>Photo.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Record.xaml.cs">
+      <DependentUpon>Record.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\SlideDownMenuView.xaml.cs">
+      <DependentUpon>SlideDownMenuView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Video.xaml.cs">
+      <DependentUpon>Video.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)App.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\Chat.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\SlideDownMenuView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\Video.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\Photo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\Record.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>
